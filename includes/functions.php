@@ -20,7 +20,7 @@ function generateSlug(string $string): string
 
 function generateCSRFToken(): string
 {
-    $token = uniqid('', true) . bin2hex(random_bytes(16));
+    $token = bin2hex(random_bytes(32));
     $_SESSION['csrf_token'] = $token;
     return $token;
 }
@@ -101,7 +101,7 @@ function sendEmail(string $to, string $subject, string $body): bool
 
 function generateOTP(): string
 {
-    return str_pad((string)rand(0, 999999), 6, '0', STR_PAD_LEFT);
+    return str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 }
 
 // ─── SESSION / AUTH HELPERS ──────────────────────────────────────────────────
@@ -218,7 +218,7 @@ function getCartItems(mysqli $conn): array
 function updateCartQuantity(mysqli $conn, int $cart_id, int $quantity): bool
 {
     $params = [$quantity, $cart_id];
-    $types  = ['ii'];
+    $types  = ['i', 'i'];
     $cond   = _cartCondition($params, $types);
     $stmt   = $conn->prepare(
         "UPDATE cart SET quantity = ?, updated_at = NOW() WHERE id = ? AND {$cond}"
@@ -232,7 +232,7 @@ function updateCartQuantity(mysqli $conn, int $cart_id, int $quantity): bool
 function removeFromCart(mysqli $conn, int $cart_id): bool
 {
     $params = [$cart_id];
-    $types  = ['i'];
+    $types  = ['i'];   // one char per param; _cartCondition appends the next
     $cond   = _cartCondition($params, $types);
     $stmt   = $conn->prepare("DELETE FROM cart WHERE id = ? AND {$cond}");
     $stmt->bind_param(implode('', $types), ...$params);
@@ -264,7 +264,7 @@ function getCartTotal(mysqli $conn): float
 
 function generateOrderNumber(): string
 {
-    return 'LM' . time() . rand(100, 999);
+    return 'LM' . time() . random_int(100, 999);
 }
 
 // ─── PRODUCT QUERIES ─────────────────────────────────────────────────────────
