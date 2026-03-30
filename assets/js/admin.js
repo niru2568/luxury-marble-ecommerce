@@ -192,7 +192,8 @@
       var regular = parseFloat(regularPriceInput.value);
       var sale    = parseFloat(salePriceInput.value);
 
-      if (!isNaN(sale) && sale !== '' && !isNaN(regular)) {
+      var saleRaw = salePriceInput.value.trim();
+      if (saleRaw !== '' && !isNaN(sale) && !isNaN(regular)) {
         if (sale >= regular) {
           salePriceInput.classList.add('is-invalid');
           errorMsg.textContent = 'Sale price must be less than the regular price (₹' + regular + ').';

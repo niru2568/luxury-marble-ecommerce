@@ -57,6 +57,22 @@
    * ==================================================== */
 
   /**
+   * Resolve the cart API endpoint from a data attribute on <body> or fall back
+   * to the default relative path. Set data-cart-api="/api/cart.php" on <body>
+   * (or window.LuxeConfig.cartApi) to override for non-root deployments.
+   */
+  function getCartApiUrl() {
+    if (window.LuxeConfig && window.LuxeConfig.cartApi) {
+      return window.LuxeConfig.cartApi;
+    }
+    var body = document.body;
+    if (body && body.getAttribute('data-cart-api')) {
+      return body.getAttribute('data-cart-api');
+    }
+    return '/api/cart.php';
+  }
+
+  /**
    * POST helper that returns a Promise resolving with parsed JSON.
    * @param {string} action
    * @param {Object} data
@@ -70,7 +86,7 @@
       formData.append(key, data[key]);
     });
 
-    return fetch('/api/cart.php', {
+    return fetch(getCartApiUrl(), {
       method: 'POST',
       body: formData,
       credentials: 'same-origin'
